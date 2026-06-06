@@ -38,7 +38,12 @@ pkgs.stdenv.mkDerivation rec {
     install -Dm755 "$unpack_dir/bin/ACCELA.AppImage" "$out/share/accela/ACCELA.AppImage"
     install -Dm644 "$unpack_dir/bin/accela.png" "$out/share/pixmaps/accela.png"
 
-    makeWrapper ${pkgs.appimage-run}/bin/appimage-run "$out/bin/accela" \
+    # Override appimage-run to add missing libraries (like zstd)
+    appimageRun="${pkgs.appimage-run.override {
+      extraPkgs = pkgs: [ pkgs.zstd ];
+    }}"
+
+    makeWrapper "$appimageRun/bin/appimage-run" "$out/bin/accela" \
       --add-flags "$out/share/accela/ACCELA.AppImage"
 
     copyDesktopItems
