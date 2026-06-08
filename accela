@@ -31,7 +31,7 @@ SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 ensure_accela_conf_general() {
     local CONF_PATH="$HOME/.config/Tachibana Labs/ACCELA.conf"
     local CONF_DIR
-    local TMP_FILE
+    local TMP_FILE=""
 
     CONF_DIR="$(dirname "$CONF_PATH")"
     if ! mkdir -p "$CONF_DIR" 2>/dev/null; then
@@ -61,7 +61,7 @@ EOF
         echo -e "${YELLOW}[WARN] Could not create temporary file for config update.${NC}" >&2
         return 0
     fi
-    trap 'rm -f "$TMP_FILE"' RETURN
+    trap 'rm -f "${TMP_FILE:-}"' RETURN
 
     if ! awk '
 BEGIN {
