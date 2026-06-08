@@ -11,7 +11,7 @@ GITHUB_USER="ciscosweater"
 GITHUB_REPO="enter-the-wired"
 
 # Headcrab (SLSsteam replacement) - execute remotely in a subshell
-SLS_URL="https://raw.githubusercontent.com/Deadboy666/h3adcr-b/main/headcrab.sh"
+SLS_URL="https://raw.githubusercontent.com/Deadboy666/h3adcr-b/main/headcrab.sh?t=$(date +%s)"
 
 # Detect if running via curl | bash (BASH_SOURCE empty or BASH_SOURCE[0] == "-")
 RUNNING_VIA_PIPE=false
@@ -59,8 +59,8 @@ if [ "$RUNNING_VIA_PIPE" = true ]; then
     trap "rm -rf $SCRIPT_DIR" EXIT
 
     # Fetch accela and fix-deps only; run Headcrab (SLSsteam) remotely in a subshell
-    curl -fsSL --retry 3 --retry-delay 2 -o "$SCRIPT_DIR/accela" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/accela"
-    curl -fsSL --retry 3 --retry-delay 2 -o "$SCRIPT_DIR/fix-deps" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/fix-deps"
+    curl -fsSL --retry 3 --retry-delay 2 -o "$SCRIPT_DIR/accela" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/accela?t=$(date +%s)"
+    curl -fsSL --retry 3 --retry-delay 2 -o "$SCRIPT_DIR/fix-deps" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/fix-deps?t=$(date +%s)"
 
     chmod +x "$SCRIPT_DIR/accela" "$SCRIPT_DIR/fix-deps"
 
@@ -145,18 +145,18 @@ ENTER_THE_WIRED_DIR="$HOME/enter-the-wired"
 mkdir -p "$ENTER_THE_WIRED_DIR"
 
 # Download each script from GitHub
-curl -fsSL --retry 3 --retry-delay 2 -o "$ENTER_THE_WIRED_DIR/accela" "https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/accela"
+curl -fsSL --retry 3 --retry-delay 2 -o "$ENTER_THE_WIRED_DIR/accela" "https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/accela?t=$(date +%s)"
 cat > "$ENTER_THE_WIRED_DIR/slssteam" << 'EOF'
 #!/usr/bin/env bash
 # Wrapper: download Headcrab to a temp file and execute it (ensures SCRIPT_DIR)
 tmp_headcrab_script=$(mktemp -t headcrab.XXXX.sh)
-curl -fsSL --retry 3 --retry-delay 2 "https://raw.githubusercontent.com/Deadboy666/h3adcr-b/main/headcrab.sh" -o "$tmp_headcrab_script"
+curl -fsSL --retry 3 --retry-delay 2 "https://raw.githubusercontent.com/Deadboy666/h3adcr-b/main/headcrab.sh?t=$(date +%s)" -o "$tmp_headcrab_script"
 chmod +x "$tmp_headcrab_script"
 bash "$tmp_headcrab_script" "$@"
 rm -f "$tmp_headcrab_script"
 EOF
-curl -fsSL --retry 3 --retry-delay 2 -o "$ENTER_THE_WIRED_DIR/fix-deps" "https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/fix-deps"
-curl -fsSL --retry 3 --retry-delay 2 -o "$ENTER_THE_WIRED_DIR/uninstall" "https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/uninstall"
+curl -fsSL --retry 3 --retry-delay 2 -o "$ENTER_THE_WIRED_DIR/fix-deps" "https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/fix-deps?t=$(date +%s)"
+curl -fsSL --retry 3 --retry-delay 2 -o "$ENTER_THE_WIRED_DIR/uninstall" "https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/uninstall?t=$(date +%s)"
 
 # Set execute permissions (ignore if files don't exist)
 chmod +x "$ENTER_THE_WIRED_DIR/accela" 2>/dev/null || true
