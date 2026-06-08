@@ -61,7 +61,7 @@ EOF
         echo -e "${YELLOW}[WARN] Could not create temporary file for config update.${NC}" >&2
         return 0
     fi
-    trap 'rm -f "${TMP_FILE:-}"' RETURN
+    trap 'rm -f "${TMP_FILE:-}"; trap - RETURN' RETURN
 
     if ! awk '
 BEGIN {
