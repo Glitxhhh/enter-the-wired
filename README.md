@@ -10,18 +10,16 @@ Minimal Linux installer for ACCELA and SLSsteam.
 curl -fsSL https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/enter-the-wired | bash
 ```
 
-## Linux ACCELA package
+## ACCELA
 
-ACCELA for Linux is distributed as `ACCELA-20260524150213-linux.tar.gz`.
+This repository maintains an actively developed fork of ACCELA. Builds are
+published as [GitHub Releases](https://github.com/ciscosweater/enter-the-wired/releases).
+The installer downloads the latest release automatically, or uses a local
+`ACCELA*.tar.gz` if one is found alongside the script.
 
-The archive contains:
-
-- `ACCELAINSTALL`
-- `ACCELAUNINSTALL`
-- `bin/ACCELA.AppImage`
-- `bin/accela.png`
-
-The `accela` installer downloads that tarball from the latest GitHub release, or uses a local `ACCELA*.tar.gz` placed next to the script.
+I know people talk shit about ACCELA. This fork is actually maintained now —
+open an [issue](https://github.com/ciscosweater/enter-the-wired/issues)
+with suggestions or fixes and we'll sort it out.
 
 ## Scripts
 
@@ -35,6 +33,11 @@ The `accela` installer downloads that tarball from the latest GitHub release, or
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/fix-deps | bash
 ```
+
+## Credits
+
+- **Deadboy666** — Headcrab (h3adcr-b)
+- **AceSLS** — SLSsteam
 
 ## Repo
 
