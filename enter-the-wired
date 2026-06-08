@@ -59,8 +59,8 @@ if [ "$RUNNING_VIA_PIPE" = true ]; then
     trap "rm -rf $SCRIPT_DIR" EXIT
 
     # Fetch accela and fix-deps only; run Headcrab (SLSsteam) remotely in a subshell
-    curl -fsSL -o "$SCRIPT_DIR/accela" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/accela"
-    curl -fsSL -o "$SCRIPT_DIR/fix-deps" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/fix-deps"
+    curl -fsSL --retry 3 --retry-delay 2 -o "$SCRIPT_DIR/accela" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/accela"
+    curl -fsSL --retry 3 --retry-delay 2 -o "$SCRIPT_DIR/fix-deps" "https://raw.githubusercontent.com/$GITHUB_USER/$GITHUB_REPO/main/fix-deps"
 
     chmod +x "$SCRIPT_DIR/accela" "$SCRIPT_DIR/fix-deps"
 
@@ -118,11 +118,13 @@ source "$SCRIPT_DIR/accela"
 
 # Execute Headcrab via a temporary downloaded script so it can determine its
 # real script directory (avoids /proc/.../fd/ issues from process substitution)
-tmp_headcrab_script=$(mktemp -t headcrab.XXXX.sh)
-curl -fsSL "$SLS_URL" -o "$tmp_headcrab_script"
-chmod +x "$tmp_headcrab_script"
-bash "$tmp_headcrab_script" "$@"
-rm -f "$tmp_headcrab_script"
+(
+    tmp_headcrab_script=$(mktemp -t headcrab.XXXX.sh)
+    trap 'rm -f "$tmp_headcrab_script"' EXIT
+    curl -fsSL --retry 3 --retry-delay 2 "$SLS_URL" -o "$tmp_headcrab_script"
+    chmod +x "$tmp_headcrab_script"
+    bash "$tmp_headcrab_script" "$@"
+)
 
 echo ""
 echo "=============================================="
@@ -148,7 +150,7 @@ cat > "$ENTER_THE_WIRED_DIR/slssteam" << 'EOF'
 #!/usr/bin/env bash
 # Wrapper: download Headcrab to a temp file and execute it (ensures SCRIPT_DIR)
 tmp_headcrab_script=$(mktemp -t headcrab.XXXX.sh)
-curl -fsSL "https://raw.githubusercontent.com/Deadboy666/h3adcr-b/main/headcrab.sh" -o "$tmp_headcrab_script"
+curl -fsSL --retry 3 --retry-delay 2 "https://raw.githubusercontent.com/Deadboy666/h3adcr-b/main/headcrab.sh" -o "$tmp_headcrab_script"
 chmod +x "$tmp_headcrab_script"
 bash "$tmp_headcrab_script" "$@"
 rm -f "$tmp_headcrab_script"

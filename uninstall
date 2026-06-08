@@ -50,6 +50,7 @@ find_steam_executable() {
 
 # Function to find Steam directory
 find_steam_directory() {
+    local FLATPAK_STEAM_DIR="$HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam"
     # Common Steam installation paths (in order of preference)
     local steam_paths=(
         "$HOME/.steam/steam"                    # Modern Steam
@@ -159,6 +160,8 @@ cleanup_slssteam() {
         "$HOME/.local/share/accela.desktop"
         "$HOME/.local/bin/accela"
         "$HOME/.local/share/applications/headcrab.desktop"
+        "$HOME/.local/share/applications/ludusavi.desktop"
+        "$HOME/.local/bin/ludusavi"
     )
 
     for file in "${files_to_remove[@]}"; do
@@ -176,6 +179,8 @@ cleanup_slssteam() {
         "$HOME/.local/share/CloudRedirect"
         "$HOME/.config/CloudRedirect"
         "$HOME/enter-the-wired"
+        "$HOME/.local/share/ludusavi"
+        "$HOME/.config/ludusavi"
         "$HOME/.var/app/com.valvesoftware.Steam/.local/share/SLSsteam"
         "$HOME/.var/app/com.valvesoftware.Steam/.config/SLSsteam"
     )
@@ -193,6 +198,17 @@ cleanup_slssteam() {
         rm -f "$steam_cfg_dir/steam.cfg"
         echo "  Removed steam.cfg"
     fi
+
+    # Cleanup ludusavi systemd units
+    for unit in "$HOME/.config/systemd/user/ludusavi-backup.service" "$HOME/.config/systemd/user/ludusavi-backup.timer"; do
+        if [ -f "$unit" ]; then
+            if command -v systemctl &>/dev/null; then
+                systemctl --user disable --now "$(basename "$unit")" 2>/dev/null || true
+            fi
+            rm -f "$unit"
+            echo "  Removed: $unit"
+        fi
+    done
 
     # Restore autostart to use correct Steam executable
     if [[ -f "$autostart_file" ]]; then

@@ -88,6 +88,24 @@ install_packages() {
     local family="$2"
     local skipped=0
 
+    if [ "$family" = "void" ]; then
+        if ! xbps-query -l | grep -q "void-repo-multilib"; then
+            echo "Enabling void-repo-multilib for 32-bit support..."
+            if command -v sudo &>/dev/null; then
+                sudo xbps-install -y void-repo-multilib || true
+                sudo xbps-install -Sy >/dev/null 2>&1
+            else
+                su -c "xbps-install -y void-repo-multilib 2>/dev/null || true && xbps-install -Sy >/dev/null 2>&1"
+            fi
+        fi
+        if command -v sudo &>/dev/null; then
+            sudo xbps-install -y $packages
+        else
+            su -c "xbps-install -y $packages"
+        fi
+        return 0
+    fi
+
     for pkg in $packages; do
         case "$family" in
             fedora)
@@ -107,7 +125,7 @@ install_packages() {
                 fi
                 ;;
             arch)
-                if sudo pacman -Sy --noconfirm "$pkg" 2>/dev/null; then
+                if sudo pacman -S --noconfirm "$pkg" 2>/dev/null; then
                     echo -e "  ${GREEN}✓${NC} $pkg"
                 else
                     echo -e "  ${YELLOW}⊘${NC} $pkg (not found)"
@@ -120,25 +138,6 @@ install_packages() {
                 else
                     echo -e "  ${YELLOW}⊘${NC} $pkg (not found)"
                     skipped=$((skipped + 1))
-                fi
-                ;;
-            void)
-                # enable multilib if missing (needed for some packages)
-                if ! xbps-query -l | grep -q "void-repo-multilib"; then
-                    echo "Enabling void-repo-multilib for 32-bit support..."
-                    if command -v sudo &>/dev/null; then
-                        sudo xbps-install -y void-repo-multilib || true
-                        sudo xbps-install -Sy >/dev/null 2>&1
-                    else
-                        su -c "xbps-install -y void-repo-multilib 2>/dev/null || true && xbps-install -Sy >/dev/null 2>&1"
-                    fi
-                fi
-
-                # install packages
-                if command -v sudo &>/dev/null; then
-                    sudo xbps-install -y $packages
-                else
-                    su -c "xbps-install -y $packages"
                 fi
                 ;;
         esac
@@ -177,6 +176,12 @@ install_dependencies() {
 
     echo ""
     echo "Installing common dependencies..."
+
+    # Refresh Arch database once before installing packages
+    if [ "$FAMILY" = "arch" ]; then
+        echo "Refreshing package database..."
+        sudo pacman -Sy --noconfirm >/dev/null 2>&1 || true
+    fi
 
     # Enable i386 for Debian/Ubuntu
     if [ "$FAMILY" = "debian" ]; then
