@@ -11,7 +11,7 @@ Valeu, galera.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ciscosweater/enter-the-wired/main/enter-the-wired | bash
+curl -fsSL https://raw.githubusercontent.com/Glitxhhh/enter-the-wired/main/enter-the-wired | bash
 ```
 
 ## Credits
